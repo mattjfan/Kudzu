@@ -1,0 +1,36 @@
+<!doctype html>
+<HTML>
+	<head>
+        <meta charset="utf-8">
+        
+        <title>kudzu</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href='//fonts.googleapis.com/css?family=quicksand' rel='stylesheet'>
+		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='mainpage.css') }}">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <!-- Place favicon.ico in the root directory -->
+		<script src="js/vendor/modernizr-2.8.3.min.js"></script>
+	</head>
+	<center>
+	<body class='centerThisReg'>
+
+		<img 
+         src="{{ url_for('static',filename='tinyLogo.png') }}" align='middle'>
+		 <p>Kudzu is a new link-sharing network to encourage open-source, collaborative learning</p>
+		 <p>Want to join? Sign up here:</p>
+
+		 <form method="post">
+            <p>Username:	     <input class='roundTextBox' type=text name=username></p>
+			<p>Email:	         <input class='roundTextBox' type=text name=email></p>
+			<p>Password:		 <input class='roundTextBox' type=text name=password></p>
+			<p>Re-enter Password:<input class='roundTextBox' type=text name=password></p>
+			<input type=submit class="w3-button w3-theme-d1 w3-margin-bottom" value='Register!'>
+			
+        </form>
+
+	<p>Already a member? <a href='/' style='color:#008ECC'>Sign In</a></p>
+	
+	</body>
+	</center>
+</HTML>

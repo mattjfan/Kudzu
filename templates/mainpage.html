@@ -1,0 +1,205 @@
+{% extends "layout.html" %}
+{%block body%}
+	{{super()}}
+
+		<div class="row">
+			<div class="col-md-3"style='position:fixed' >
+				
+					<ul>
+				 <div class="input-group">
+					  <input type="text" class="form-control" placeholder="Search for...">
+					  <span class="input-group-btn">
+						<button class="btn btn-default" type="button">Go!</button>
+					  </span>
+					</div><!-- /input-group -->
+					</br>
+					<p style='text-align:center'><i>Discover something cool!</i></p>
+
+					</ul>
+				
+				
+			</div>
+			<div class="col-md-6 col-md-offset-3" >
+			{%if not latest_posts%}
+			<p><i>Sorry, no {%if page>1%}more{%endif%} posts available :(</i></p>
+			{%else%}
+			
+				{%for post in latest_posts%}
+					<div class="panel hoverable">
+					<div class="panel-body">
+					<a href="/profile/{{post['username']}}"><img src="{{url_for('static', filename='profile_pics/'+post['username']+'.png')}}"  alt="Avatar" class="img-circle pull-left hoverable2" style="width:60px"></a>
+					<span class="w3-right w3-opacity">{{post['time_stamp']}}</span>
+					<h4 style='float:left'>Posted by 
+							{%if post['username']==username%}
+							<strong>
+							{{post['username'].title()}}
+							</strong>
+							{%endif%}
+							{%if post['username']!=username%}
+							
+							{{post['username'].title()}}
+							{%endif%}
+							</h4><br>
+							<hr class="w3-clear">
+					{%if post['type']=='link'%}
+							<a href="{{post['url']}}" target="_blank"style='width:80%' data-toggle="tooltip" data-placement="right" title="{{post['url']}}"><img src="http://s2.googleusercontent.com/s2/favicons?domain_url={{post['url']}}">
+							<b>{{post['title'].title()}}</b></a>
+							<p><i>{{post['comment']}}</i></p>
+					{%elif post['type']=='trade'%}
+						
+						<p>Offering skills in <b>{{post['offer']}}</b> in return for skills in <b>{{post['request']}}</b><p>
+						<p><i>{{post['comment']}}</i></p>
+						<form method='POST'>
+						{%if post['is_accepted'] and post['accepted_by']==user_id%}
+							<button type="submit" class="btn btn-kudzu" value="${{post['post_id']}}"name='submit'>Rescind Acceptance</button>
+						{%elif post['is_accepted']%}
+							<p><b>Offer has been accepted by <a href="/profile/{{post['accepted_by_user']}}">{{post['accepted_by_user'].title()}}</a></b></p>
+						{%elif post['username']==username%}
+							<p style='color:grey'><b>No Offers Yet</b></p>
+						{%else%}
+							<button type="submit" class="btn btn-kudzu" value="${{post['post_id']}}"name='submit'>Accept Trade</button>
+						{%endif%}
+						</form>
+					{%endif%}
+					</div>	
+					</div>
+				{%endfor%}
+			{%endif%}
+			
+				<nav aria-label="...">
+				  <ul class="pager">
+					{%if page > 1%}
+					<li><a href="/home/{{page-1}}" style='color:#3A9E5C'>Newer</a></li>
+					<li><a href="/home/1" style='color:#3A9E5C'>Go Home</a></li>
+					{%endif%}
+					{%if latest_posts|length==posts_per_page%}
+					<li><a href="/home/{{page+1}}" style='color:#3A9E5C'>Older</a></li>
+					{%endif%}
+				  </ul>
+				</nav>
+			</div>
+			<div class="col-md-3 " >
+			<div class='panel'style='position:fixed; width:22.5%'>
+					<ul class="nav nav-tabs" >
+				  <li class="active"><a data-toggle="tab" href="#share"  style='color:#3A9E5C;'>SHARE</a></li>
+				  <li><a data-toggle="tab" href="#trade" style='color:#3A9E5C;'>TRADE</a></li>
+				  <li><a data-toggle="tab" href="#pitch" style='color:#3A9E5C;'>PITCH</a></li>
+				</ul>
+				<center>
+				<div class="tab-content">
+				  <div id="share" class="tab-pane fade in active">
+					<!--share a link-->
+					</br>
+					
+					<p style='text-align:center'><i>Working on something? Share it here!</i></p>
+					
+				<form method='POST' style='width:90%'>
+				  <div class="form-group">
+					
+					<input type="url" class="form-control" id="link" name='link' placeholder="Paste Link Here">
+					</br>
+					<input type="text" class="form-control" maxlength='40' id="title" name='title' placeholder="Title your Link">
+					<textarea class='form-control' id='comment' maxlength='160' name='comment' placeholder='Describe your link!'  rows = 5></textarea>
+				  </div>
+				<p>Privacy:
+				<input id="public" type='radio' name='privacy' value='public' checked='checked'>
+				public
+				<input id="private" type='radio' name='privacy' value='private'>
+				private
+				<input id="secret" type='radio' name='privacy' value='secret'>
+				secret
+				</p>
+				
+				<p>
+				Project: 
+				<select name="project">
+				{%for project in projects|reverse%}
+	
+				<option value="{{project}}">{{project}}</option>
+				{%endfor%}
+				 <!--does this work?-->
+				</select>
+				</p>
+				
+				  <button type="submit" class="btn btn-kudzu" value='share' name='submit'>Share</button>
+				</form>
+				</br>
+				  </div>
+				  <div id="trade" class="tab-pane fade">
+					<!---->
+					</br>
+					<p style='text-align:center'><i>Need some help? Request a skill trade!</i></p>
+					<form method='POST' style='width:90%'>
+					
+					<p>Requested Skill:
+						<select class='selectpicker' name="request">
+						<option value="none" data-icon='glyphicon-star-empty'>NONE</option>
+						<option value="negotiable" data-icon='glyphicon-star'>NEGOTIABLE</option>
+						<option value="art" data-icon='glyphicon-pencil'>art</option>
+						<option value="athletic" data-icon='glyphicon-flash'>athletic</option>
+						<option value="creative" data-icon='glyphicon-blackboard'>creative</option>
+						<option value="legal" data-icon='glyphicon-briefcase'>legal</option>
+						<option value="logistics" data-icon='glyphicon-wrench'>logistics</option>
+						<option value="music" data-icon='glyphicon-music'>music</option>
+						<option value="networking" data-icon='glyphicon-user'>networking</option>
+						<option value="technology" data-icon='glyphicon-tasks'>technology</option>
+						<option value="video" data-icon='glyphicon-film'>video</option>
+						<option value="writing" data-icon='glyphicon-book'>writing</option>
+						</select>
+					</p>
+					<p>Offered Skill:
+						<select class='selectpicker'  name="offer">
+						<option value="negotiable" data-icon='glyphicon-star'>NEGOTIABLE</option>
+						<option value="none" data-icon='glyphicon-star-empty'>NONE</option>
+						<option value="art" data-icon='glyphicon-pencil'>art</option>
+						<option value="athletic" data-icon='glyphicon-flash'>athletic</option>
+						<option value="creative" data-icon='glyphicon-blackboard'>creative</option>
+						<option value="legal" data-icon='glyphicon-briefcase'>legal</option>
+						<option value="logistics" data-icon='glyphicon-wrench'>logistics</option>
+						<option value="music" data-icon='glyphicon-music'>music</option>
+						<option value="networking" data-icon='glyphicon-user'>networking</option>
+						<option value="technology" data-icon='glyphicon-tasks'>technology</option>
+						<option value="video" data-icon='glyphicon-film'>video</option>
+						<option value="writing" data-icon='glyphicon-book'>writing</option>
+						</select>
+					</p>
+					 <div class="form-group">
+						<textarea class='form-control' id='comment' name='comment' placeholder='Elaborate on your trade'  rows = 5></textarea>
+					</div>
+					<p>Privacy:
+						<input id="public" type='radio' name='privacy' value='public' checked='checked'>
+						public
+						<input id="private" type='radio' name='privacy' value='private'>
+						private
+						<input id="secret" type='radio' name='privacy' value='secret'>
+						secret
+						</p>
+						
+						<p>
+						Project: 
+						<select name="project">
+						{%for project in projects|reverse%}
+			
+						<option value="{{project}}">{{project}}</option>
+						{%endfor%}
+						 <!--does this work?-->
+						</select>
+					</p>
+					<button type="submit" class="btn btn-kudzu" value='trade' name='submit'>Make Proposal</button>
+					</form>
+					</br>
+				  </div>
+				  <div id="pitch" class="tab-pane fade">
+					<!---->
+					</br>
+					<p style='text-align:center'><i>Need a second opinion? Pitch it!</i></p>
+					
+				  </div>
+				
+				</div>
+				</center>
+					
+		  </div>
+		</div>
+	</div>
+{%endblock%}

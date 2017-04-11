@@ -1,0 +1,60 @@
+{%extends 'layout.html'%}
+{%block body%}
+{{super()}}
+	{%if active_user==username%}
+	<p><b>Your Projects:<b><p>
+	{%else%}
+	<p><b>{{username.title()}}'s Projects:</b></p>
+	{%endif%}
+	{%for project in projects|reverse%}
+	
+	<a href='/projects/{{username}}/{{project}}'/>{{project}}</a><br>
+	{%endfor%}
+	</br>
+	</br>
+	</br>
+	</br>
+	<!-- Trigger the modal with a button -->
+
+<button type="button" class="btn btn-grey" data-toggle="modal" data-target="#myModal">New Project</button>
+
+<!-- Modal -->
+
+<div id="myModal" class="modal fade " role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Create a New Project</h4>
+      </div>
+      <div class="modal-body">
+		<form method=Post>
+			<div class='form-area'>
+				{%if error != None%}
+				<p>{{error}}</p>
+				{%endif%}
+				<input type="text" class="form-control" maxlength='40' id="title" name='title' placeholder="Project Name">
+				<textarea class='form-control' id='comment' maxlength='500' name='comment' placeholder='Describe your project!'  rows = 5></textarea>
+				<p>Privacy:
+				<input id="public" type='radio' name='privacy' value='public' checked='checked'>
+				public
+				<input id="private" type='radio' name='privacy' value='private'>
+				private
+				<input id="secret" type='radio' name='privacy' value='secret'>
+				secret
+				</p>
+				</br>
+				<button type="submit" class="btn btn-kudzu" value="create_project"name='submit'>Create</button>
+			</div>
+			
+		</form>
+        <!--p>Some text in the modal.</p-->
+      </div>
+     
+    </div>
+
+  </div>
+</div>
+{%endblock%}

@@ -1,0 +1,67 @@
+{%extends 'layout.html'%}
+{%block body%}
+{{super()}}
+	
+	<!--style>body{background:white}</style-->
+	<div class="row">
+			<div class="col-md-1">
+			</div>
+			<div class ="col-md-10">
+	<p>This is <b>{{username.title()}}'s</b> project named <b>{{project_name.title()}}</b><p>
+	{%if not posts%}
+	<p style='color:grey'><i>This project is currently empty</i></p>
+	{%endif%}
+	<!--div class="well"-->
+	{%for post in posts%}
+	<a>
+	<div class=" my-callout my-callout-{{post['type']}} hoverable " style='width:100%'>
+	<div class='panel-body' style='padding:0px'>
+	<a href="/post/{{post['post_id']}}">
+	<span class="glyphicon glyphicon-question-sign pull-left hoverable2" aria-hidden="true" data-toggle="tooltip" data-placement="right" title="{{post['comment']}}" style='font-size:28px;color:grey'></span>
+	</a>
+	<p class='pull-right' style='color:grey'>{{post['time_stamp']}}</p>
+	{%if post['type']=='link'%}
+	
+	
+
+
+		<a  href="{{post['url']}}" data-toggle="tooltip" data-placement="right" title="{{post['url']}}"><img src="http://s2.googleusercontent.com/s2/favicons?domain_url={{post['url']}}">{{post['title']}}</a>
+		
+
+	
+	
+	{%elif post['type']=='trade'%}
+	
+	
+	
+	
+	<p>You offered <b>{{post['offer']}}</b> skills for help in <b>{{post['request']}}</b> skills <i style='color:grey'>
+	{%if post['is_accepted']%}
+			Accepted by <a href="/profile/{{post['accepted_by_user']}}" style='color:inherit'><b>{{post['accepted_by_user']}}</b></a>
+	{%else%}
+			Not yet accepted :(
+	{%endif%}
+	</i>
+	</p>
+	
+	
+	{%endif%}
+	</div>
+	</div>
+	
+	{%endfor%}
+	</div>
+	<div class='col-md-1'>
+	
+	</div>
+	
+	
+	</div>
+	</div>
+	
+	<script type="text/javascript">
+    $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+});
+</script>
+{%endblock%}

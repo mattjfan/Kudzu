@@ -1,0 +1,48 @@
+{%extends 'layout.html'%}
+{%block body%}
+{{super()}}
+	
+        <img src="{{url_for('static', filename='profile_pics/'+user_info['username']+'.png')}}" alt="Avatar" class="w3-circle" align='middle' style="width:100px">
+		<center>
+		{%if is_user%}
+			<p style='color:#3A9E5C; font-weight: bold'>Hello {{user_info['first_name']}}!</p>
+			<p style='color:#66B666'>Edit your profile:</p>
+			
+			<form method = "POST" action='/update_profile_pic' enctype = "multipart/form-data">
+			 
+			 </br>
+			<table style='overflow:hidden'>
+			<tr>
+			 <!--p>Update Profile Pic: </p-->
+			 <td><b>Update Profile Pic:</b></td>
+			 <td><input type = "file" name = "file" style='float:right; margin:0 1em;'></input></td>
+			 <td><button type="submit" class="btn btn-kudzu-blue" value="update_pic"name='submit' style='float:left; '>Update Picture</button></td>
+			</tr>
+			</table>
+			</br>
+			
+		{%else%}
+			<!--If it isn't the user's profile:*/-->
+			<p>This is {{user_info['username'].title()}} <i style='color:grey'>({{user_info['first_name']+" "+user_info['last_name']}})</i></p>
+			</br>
+			
+			 {%if user_info['bio']!=""%}
+			 <p><b>About:</b></p>
+			 <p>{{user_info['bio']}}</p>
+			 {%endif%}
+			 </br>
+			<form method='POST'><!--Follow and unfollow-->
+				{%if is_subscribed%}
+					<button type="submit" class="btn btn-kudzu-blue" value="unfollow"name='submit'>Unfollow</button>
+				{%else%}
+					<button type="submit" class="btn btn-kudzu-blue" value="follow"name='submit'>Follow</button>
+				{%endif%}
+			</form>
+		{%endif%}
+		
+		
+		
+
+	
+	</center>
+{%endblock%}

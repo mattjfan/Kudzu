@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{%block body%}
+	{{super()}}
+	<img src="{{url_for('static', filename='profile_pics/'+user_info['username']+'.png')}}" alt="Avatar" class="w3-circle" align='middle' style="width:100px">
+	</br>
+	</br>
+	<p>These are your messages with {{user_info['username'].title()}} <i style='color:grey'>({{user_info['first_name']+" "+user_info['last_name']}})</i></p>
+	<center>
+	<div class="well" style="height:50vh;display:block;overflow-y: scroll;width:95%">
+	{%for n in range(0,20)%}
+		<div class="panel panel-default">
+			<div class="panel-body">
+				Basic panel example
+			</div>
+		</div>
+	
+	{%endfor%}
+</div>
+</br>
+<form method='POST'>
+	<div class="form-group">
+	
+	<table style='width:95%'>
+	<tr>
+
+	<td style='width:100%'><input type="text" class="form-control" maxlength='600' id="message" name='message' placeholder="Write a message"></td>
+	<td><button type="submit" class="btn btn-kudzu" value="send"name='submit'>Send</button></td>
+	<p>
+	</tr>
+	</table>
+	</center>
+	</div>
+</form>
+{%endblock%}
