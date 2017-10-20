@@ -5,19 +5,19 @@ import models2 as models
 from flask_bcrypt import generate_password_hash, check_password_hash
 import os
 from werkzeug import secure_filename
-app = flask.Flask(__name__)
+application = flask.Flask(__name__)
 DEBUG=True
-app.config['UPLOAD_FOLDER']=os.path.dirname(os.path.realpath(__file__))+'//static//profile_pics'
+application.config['UPLOAD_FOLDER']=os.path.dirname(os.path.realpath(__file__))+'//static//profile_pics'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 # PORT=8000
 # HOST='0.0.0.0'
-app.secret_key = '[][213*(@!321aasdbFAS(*!@#afA0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+application.secret_key = '[][213*(@!321aasdbFAS(*!@#afA0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 """
 login_manager=LoginManager()
-login_manager.init_app(app)
+login_manager.init_app(application)
 login_manager.login_view = 'login'
 """
-@app.after_request
+@application.after_request
 def add_header(response):
     """
     Add headers to both force latest IE rendering engine or Chrome Frame,
@@ -27,13 +27,13 @@ def add_header(response):
     response.headers['Cache-Control'] = 'public, max-age=0'
     return response
 
-@app.route('/register')
+@application.route('/register')
 def register():
 	return flask.render_template('registration.html')
 
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@application.route('/login', methods=['GET', 'POST'])
 def login():
 	error = None
 	if flask.request.method == 'POST':
@@ -53,12 +53,12 @@ def login():
 """
 	if 'username' in session:
 		return 'Logged in as {}'.format( escape(session['username']))"""
-@app.route('/')
-@app.route('/home')
+@application.route('/')
+@application.route('/home')
 def redirect_to_main():
 	return flask.redirect('/home/1')
 
-@app.route('/home/<int:page>', methods=['GET', 'POST'])
+@application.route('/home/<int:page>', methods=['GET', 'POST'])
 def main(page):
 	postS_PER_PAGE=10
 	error = None
@@ -111,23 +111,23 @@ def main(page):
 		return flask.redirect(flask.url_for('login'))
 
 
-@app.route('/flush/<redirect_url>')
+@application.route('/flush/<redirect_url>')
 def flush(redirect_url):
 	return flask.redirect(flask.url_for(redirect_url))
 	
-@app.route('/flush/<re1>/<re2>')
+@application.route('/flush/<re1>/<re2>')
 def flush2(re1,re2):
 	return flask.redirect('/{}/{}'.format(re1,re2))
 	
-@app.route('/projects')
+@application.route('/projects')
 def projects_redirect():
 	return flask.redirect('/projects/{}'.format(flask.session['username']))
 
-@app.route('/trades')
+@application.route('/trades')
 def trades_index():
 	return flask.render_template('trades_index.html',username=flask.session['username'])
 
-@app.route('/projects/<username>',methods=['GET', 'POST'])
+@application.route('/projects/<username>',methods=['GET', 'POST'])
 def projects_index(username):
 	if flask.request.method == 'POST':
 		print('you said post')
@@ -151,7 +151,7 @@ def projects_index(username):
 	
 
 
-@app.route('/projects/<username>/<project_name>')
+@application.route('/projects/<username>/<project_name>')
 def project(username, project_name):
 	context = {
 		'username': username,
@@ -161,18 +161,18 @@ def project(username, project_name):
 	return flask.render_template('project_page.html', **context)
 
 
-@app.route('/logout')
+@application.route('/logout')
 def logout():
 	# remove the username from the session if it's there
 	flask.session.pop('username', None)
 	return flask.redirect(flask.url_for('login'))
 
 
-@app.route('/profile')
+@application.route('/profile')
 def my_profile():
 	return flask.redirect('/profile/{}'.format(flask.session['username']))
 
-@app.route('/post/<int:post_id>')
+@application.route('/post/<int:post_id>')
 def post(post_id):
 
 	context={'post_id':post_id,'username': flask.session['username']}
@@ -180,7 +180,7 @@ def post(post_id):
 
 
 
-@app.route('/profile/<username>',methods=['GET', 'POST'])
+@application.route('/profile/<username>',methods=['GET', 'POST'])
 def profile_page(username):
 	print('on the right page')
 	if flask.request.method == 'POST':
@@ -206,26 +206,26 @@ def profile_page(username):
 
 # return "This is the profile page for {}".format(username)
 
-@app.route('/links<int:linkNum>')
+@application.route('/links<int:linkNum>')
 def checkLinkFunctionality(linkNum):
 	context = {'linkNum': linkNum,'username': username}
 	return flask.render_template('linkCheck.html', **context)
 
 
-@app.route('/messages/<username>')
+@application.route('/messages/<username>')
 def direct_messages(username):
 	context = {'user_info':models.User.get_user_info(username),'username': flask.session['username'],
 			'messages':models.Direct_Message.get_conversation(flask.session['username'],username)}
 	return flask.render_template('direct_messages.html', **context)
 	
 	
-@app.route('/update_profile_pic', methods=['GET','POST'])
+@application.route('/update_profile_pic', methods=['GET','POST'])
 def upload_file():
 	f = flask.request.files['file']
 	if flask.request.method == 'POST' and '.' in f.filename and f.filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS:
 		extension=f.filename.rsplit('.', 1)[1].lower()
 		file_name=secure_filename('{}.{}'.format(flask.session['username'],extension))
-		f.save(os.path.join(app.config['UPLOAD_FOLDER'],file_name))
+		f.save(os.path.join(application.config['UPLOAD_FOLDER'],file_name))
 	return flask.redirect(flask.url_for('my_profile'))
 	
 if __name__ == '__main__':
@@ -256,4 +256,4 @@ if __name__ == '__main__':
 	models.post.make_post(link='https://trello.com/b/xn8xrvCb/kudzu-dev', username='mfan',comment="Check out my progress on the site on our trello board!")
 	models.post.make_post(link='https://www.dropbox.com/s/d0y57utqwnyry7a/mainpage2.html?dl=0', username='mfan',comment="Source code for our main page's front end... a bit hacky, but it works :)")
 	"""
-	app.run(debug=DEBUG)  # add in host and port later...
+	application.run(debug=DEBUG)  # add in host and port later...
